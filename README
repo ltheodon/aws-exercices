@@ -1,0 +1,33 @@
+How does it work?
+
+# Files
+This folder contains 4 files.
+	+ First project:
+		- send.py : sends a message to the server containing a list of integers.
+		- getback.py : retrieves the list of messages on the server containing a list of integers, process these numbers, and sends back a message when it's done.
+	+ Second project:
+		- i1.py : uploads an image to the bucket and sends a message to the server.
+		- i2.py : recieve the message from the client, process the image, upload the processed image to the bucket and send a message to the client.
+
+
+# First project
+This program operates with CLI. We just ask the user a list of integers to process. The list must only contains numbers and comas. hence, this is an exemple of a correct answer:
+1,2,3
+and this is an example of a list that won't be processed:
+1,2.0,3210,+6540a
+
+The message is sent as a string and placed in a queue called "requestQueue". It is then recieved by the server which computes the min, max, mean and median of the numbers recieved.
+
+A message is then been sent which contains those values, so as the ID of the first message.
+
+Eventually, we store all those data as a log event, which contains not only the list of numbers and the results of the computations, but also the ID and the timestamp.
+
+All the user has to do is sending the list of numbers.
+
+# Second project
+This program use a simple GUI. We both need PySimpleGUI and skimage packages in order to make it work.
+On the main window, we ask the user to select a picture (and to select a folder if needed). We only accept GIF and PNG format.
+Then, the user can select a parameter called sigma. This is due to the fact that we will apply a gaussian blur on the server side of the script.
+When the user has selected the correct image and value of sigma, he can then press the "send" button in order to upload the picture to the bucket. A message will also be placed in a queue called "inbox", which contains the Key of the image and the chosen value of sigma.
+The server will listen to this queue and, upon recieving a message, will process the corresponding image. Then, it will upload the blurred image to the bucket and send a message to the client by using a queue called outbox, containing the key of the new image.
+Once the client recieve this new message, it will download the new blurred image and update the list of files in the folder so the user can see the result.
