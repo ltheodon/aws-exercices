@@ -35,7 +35,6 @@ while True:
 		goNext = True
 
 	for message in queue.receive_messages(MessageAttributeNames=['All']):
-		print(message.body)
 		if not message.body.replace(',','').isdecimal():
 			print('Données non conformes.')
 			message.delete()
@@ -79,7 +78,6 @@ while True:
 		timestamp = int(round(time.time() * 1000))
 
 		logrep = logs.describe_log_streams(logGroupName=LOG_GROUP)
-		logrep['logStreams'][0]['uploadSequenceToken']
 		logrep = logs.put_log_events(
 			logGroupName=LOG_GROUP,
 			logStreamName=LOG_STREAM,
